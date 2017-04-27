@@ -1,17 +1,25 @@
-const express = require('express');
-const app = express();
+const app = require('express')();
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
-users = [];
-connections = [];
 
-server.listen(process.env.PORT || 3000);
-
-app.get('/', () => {
+app.get('/', function(req, res){
+    res.send('');
 });
 
-io.sockets.on('connection', (socket) => {
-    connections.push(socket);
-    console.log(connections.length);
+io.on('connection', (socket) => {
+    io.emit('message', 'user joined');
+
+    socket.on('message', (msg) => {
+        console.log(msg);
+        io.emit('message', msg);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+});
+
+server.listen(3000, function(){
+  console.log('listening on *:3000');
 });
