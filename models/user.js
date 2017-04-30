@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-mongoose.connect('mongodb://localhost/chat');
+const bcrypt = require('bcryptjs');
 
 const db = mongoose.connection;
 
@@ -17,3 +16,17 @@ const UserSchema = mongoose.Schema({
         type: String
     }
 });
+
+// create model from scheama
+const User =  mongoose.model('User', UserSchema);
+
+User.createUser = (newUser, callback) => {
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+            newUser.password = hash;
+            newUser.save(callback);
+        });
+    });
+} 
+
+module.exports = User;

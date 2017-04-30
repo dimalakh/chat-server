@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const User = require('../models/user'); 
+
 router.get('/signup', (req, res) => {
     res.send('signup');
 });
@@ -23,8 +25,16 @@ router.post('/signup', (req, res) => {
     if(errors) {
         console.log('errors' + errors);
     } else {
-        console.log(name);
-        res.send('ok');
+        const newUser = new User({
+            'username': name,
+            'password': password,
+            'email': email
+        });
+
+        User.createUser(newUser, (err, user) => {
+            if(err) throw err;
+            console.log(user);
+        });
     }
 
 });
