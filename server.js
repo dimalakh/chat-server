@@ -3,6 +3,7 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const mongo = require('mongodb');
 
@@ -24,6 +25,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+app.use(expressValidator());
 
 app.use('/', routes);
 app.use('/auth', auth);
