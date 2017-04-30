@@ -1,49 +1,35 @@
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const app = require('express')();
-const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+const mongo = require('mongodb');
+
+mongoose.connect('mongodb://localhost/chat');
+const db = mongoose.connection;
 
 
-app.get('/', function(req, res){
-    res.send('');
-});
+const routes = require('./routes/index');
+const auth = require('./routes/auth');
 
-mongoose.connect('mongodb://localhost/test');
+const app = express();
 
-//shemas
-const messageShema = { 
-    chatId: Number,
-    msg: String,
-    time: Number 
-}
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-const Message = mongoose.model('Message', messageShema);
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 
+app.use('/', routes);
+app.use('/auth', auth);
 
-io.on('connection', (socket) => {
-    io.emit('message', 'user joined');
+app.set('port', 3000);
 
-    socket.on('message', (msgText) => {
-        const message = new Message({
-            chatId: 1,
-            msg: msgText,
-            time: Date.now() 
-        });
-
-        message.save((err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
-
-        io.emit('message', msgText);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
-});
-
-server.listen(3000, function(){
-  console.log('listening on *:3000');
+app.listen(app.get('port'), () => {
+    console.log(`server is running on localhost:${app.get('port')}`)
 });
