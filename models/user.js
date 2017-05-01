@@ -27,6 +27,21 @@ User.createUser = (newUser, callback) => {
             newUser.save(callback);
         });
     });
-} 
+}
+
+User.getUserByUsername = (username, callback) => {
+    User.findOne({'username': username}, callback);
+}
+
+User.getUserById = (id, callback) => {
+    User.findById(id, callback);
+}
+
+User.comparePassword = (typedPassword, hash, callback) => {
+    bcrypt.compare(typedPassword, hash, (err, isMatch) => {
+        if(err) throw err;
+        callback(null, isMatch);
+    });
+}
 
 module.exports = User;

@@ -1,4 +1,6 @@
 const express = require('express');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const router = express.Router();
 
 const User = require('../models/user'); 
@@ -36,7 +38,41 @@ router.post('/signup', (req, res) => {
             console.log(user);
         });
     }
+});
 
+//login
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+      User.getUserByUsername(username, (err, user) => {
+        if(err) throw err;
+        if(!user) {
+            return done(null, false, {'message': 'unknown user'});
+        }
+        
+        User.comparePassword(password, user.password, (err, isMatch) => {
+            if(err) throw err;
+            if(isMatch) {
+                return done(null, user);
+            } else {
+                return done(null, false, {'message': 'incorrect password'});
+            }
+        });
+      });
+  }
+));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser((user, done) => {
+    User.getUserById(id, (err, done) => {
+        done(err, user);
+    });
+});
+
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    res.send(req.user);
 });
 
 module.exports = router;

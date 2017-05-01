@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
+const passport = require('passport');
 const mongoose = require('mongoose');
 const mongo = require('mongodb');
 
@@ -25,6 +26,9 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(expressValidator());
 
