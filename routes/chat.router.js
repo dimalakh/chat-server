@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.send('Hola');
+router.get('chat/:id', (req, res) => {
+    console.log(req.params.id);
+    res.send('Holas');
 });
 
 module.exports = router;
