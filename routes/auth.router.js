@@ -1,22 +1,36 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user'); 
-
-router.get('/signup', (req, res) => {
-    res.send('signup');
-});
+const User = require('../models/user.model'); 
 
 router.post('/signup', (req, res) => {
-    res.send('signup');
-});
+    const newUser = new User({
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email
+    });
 
-router.get('/login', (req, res) => {
-    res.send('login');
+    newUser.save((err, user) => {
+        if (err) res.send(err); 
+        res.send(user);
+    });
 });
 
 router.post('/login', (req, res) => {
-    res.send('login');
+    User.findOne({
+        username: req.body.username
+    }).exec((err, user) => {
+        if (err) res.send(err);
+        if (user === null) {
+            res.status(404).send(404);
+        } else {
+            if (user.password === req.body.password) {
+                res.json(user);
+            } else {
+                res.status(401).send(401);
+            }
+        }
+    });
 });
 
 module.exports = router;
