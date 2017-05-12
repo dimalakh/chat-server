@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 const User = require('../models/user.model'); 
@@ -25,7 +26,12 @@ router.post('/login', (req, res) => {
             res.status(404).send(404);
         } else {
             if (user.password === req.body.password) {
-                res.json(user);
+                const token = jwt.sign(user, 'secretKey', { noTimestamp: true })
+                res.json({
+                    user,
+                    token,
+                    tokenType: 'Bearer'
+                });
             } else {
                 res.status(401).send(401);
             }
