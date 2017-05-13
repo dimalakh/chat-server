@@ -27,9 +27,25 @@ app.use('/chat', chat);
 
 io.on('connection', socketioJwt.authorize({
     secret: 'secretKey',
-    callback: false // 15 seconds to send the authentication message
-  })).on('authenticated', (socket) => {
-    //this socket is authenticated, we are good to handle more events from it.
+    callback: false 
+  }))
+  .on('authenticated', (socket) => {
+    socket.on('message', (msg) => {
+        io.emit('message', msg);
+    });
+
+    socket.on('new-chat', chat => {
+      io.emit('new-chat', chat);
+    })
+
+    socket.on('join-room', room => {
+      socket.join(room);
+      io.emit('join-room', {
+        user: socket.decoded_token,
+        time: Date.now()
+      });
+    })
+
     console.log(socket.decoded_token);
   });
 
