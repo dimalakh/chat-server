@@ -46,7 +46,6 @@ io.on('connection', socketioJwt.authorize({
       });
     })
 
-    console.log(socket.decoded_token);
   });
 
 server.listen(3000, () => {

@@ -2,6 +2,22 @@ const express = require('express');
 const router = express.Router();
 
 const Message = require('../models/message.model');
+const Conversation = require('../models/conversation.model');
+
+router.get('/conversations', (req, res) => {
+    Chat.find().exec((err, conversations) => {
+        if (err) res.send(err);
+        res.status(200).json(chats);
+    });
+});
+
+router.post('/conversation', (req, res) => {
+    const newConversation = new Conversation ({});
+    newChat.save((err, data) => {
+        if (err) res.send(err);
+        res.status(200).json(data);
+    });
+});
 
 router.post('/message', (req, res) => {
     const newMessage = new Message ({
