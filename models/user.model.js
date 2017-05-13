@@ -14,9 +14,9 @@ const UserSchema = mongoose.Schema({
     email: {
         type: String
     },
-    chats: {
+    conversations: {
         type: [mongoose.Schema.ObjectId],
-        ref: 'Chat'
+        ref: 'Conversation'
     }
 });
 

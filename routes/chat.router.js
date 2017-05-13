@@ -1,20 +1,26 @@
 const express = require('express');
 const router = express.Router();
 
+const User = require('../models/user.model');
 const Message = require('../models/message.model');
 const Conversation = require('../models/conversation.model');
 
 router.get('/conversations', (req, res) => {
-    Chat.find().exec((err, conversations) => {
+    Conversation.find().exec((err, conversations) => {
         if (err) res.send(err);
-        res.status(200).json(chats);
+        res.status(200).json(conversations);
     });
 });
 
 router.post('/conversation', (req, res) => {
     const newConversation = new Conversation ({});
-    newChat.save((err, data) => {
+    newConversation.save((err, data) => {
         if (err) res.send(err);
+        User.findOne({_id: '5916f46068ad8f07a2472b03'})
+        exec((err, user) => {
+            user.conversations.push(newConversation);
+            user.save();
+        });
         res.status(200).json(data);
     });
 });

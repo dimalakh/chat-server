@@ -14,6 +14,9 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+const Message = require('./models/message.model');
+const Conversation = require('./models/conversation.model');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -30,8 +33,23 @@ io.on('connection', socketioJwt.authorize({
     callback: false 
   }))
   .on('authenticated', (socket) => {
-    socket.on('message', (msg) => {
-        io.emit('message', msg);
+    socket.on('message', (messageObject) => {
+        io.emit('message', messageObject);
+
+        const newMessage = new Message ({
+            msg: messageObject.message
+        });
+
+        Conversation.findOne({_id: messageObject.chatId})
+        .exec((err, conv) => {
+            //console.log(data);
+            conv.messages.push(newMessage);
+            conv.save();
+        });
+        
+        newMessage.save((err, user) => {
+            if (err) console.log(err);
+        });
     });
 
     socket.on('new-chat', chat => {
