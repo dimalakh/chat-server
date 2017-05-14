@@ -42,7 +42,7 @@ io.on('connection', socketioJwt.authorize({
         });
 
         console.log(newMessage);
-       Conversation.findOne({_id: messageObject.chatId})
+       Conversation.findOne({_id: messageObject.conversationId})
        .exec((err, conv) => {
             conv.messages.push(newMessage);
             conv.save();
