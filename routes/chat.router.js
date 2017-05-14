@@ -36,7 +36,7 @@ router.post('/message', (req, res) => {
     });
 });
 
-//get all user conversations
+//get user conversations
 router.get('/:userId', (req, res) => {
     User.findOne({ _id: req.params.userId})
         .exec((err, user) => {
@@ -44,6 +44,17 @@ router.get('/:userId', (req, res) => {
             .exec((err, conversation) => {
                 res.send(conversation);
             })
+        });
+});
+
+// get  messages by conversation id
+router.get('/conversation/:id', (req, res) => {
+    Conversation.findOne({ _id: req.params.id})
+        .exec((err, conversation) => {
+            Message.find({ _id: {$in: conversation.messages }})
+            .exec((err, messages) => {
+                res.send(messages);
+            });
         });
 });
 
