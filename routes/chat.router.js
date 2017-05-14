@@ -17,7 +17,7 @@ router.post('/conversation', (req, res) => {
     newConversation.save((err, data) => {
         if (err) res.send(err);
         User.findOne({_id: '5916f46068ad8f07a2472b03'})
-        exec((err, user) => {
+        .exec((err, user) => {
             user.conversations.push(newConversation);
             user.save();
         });

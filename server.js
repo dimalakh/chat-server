@@ -37,12 +37,13 @@ io.on('connection', socketioJwt.authorize({
         io.emit('message', messageObject);
 
         const newMessage = new Message ({
-            msg: messageObject.message
+            msg: messageObject.msg,
+            sender: socket.decoded_token._doc._id
         });
 
-        Conversation.findOne({_id: messageObject.chatId})
-        .exec((err, conv) => {
-            //console.log(data);
+        console.log(newMessage);
+       Conversation.findOne({_id: messageObject.chatId})
+       .exec((err, conv) => {
             conv.messages.push(newMessage);
             conv.save();
         });
