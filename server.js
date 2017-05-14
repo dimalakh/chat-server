@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const socketioJwt = require('socketio-jwt');
 const mongoose = require('mongoose');
+const cors = require('cors')
 
 mongoose.connect('mongodb://localhost/chat');
 const db = mongoose.connection;
@@ -17,6 +18,7 @@ const io = require('socket.io')(server);
 const Message = require('./models/message.model');
 const Conversation = require('./models/conversation.model');
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -34,14 +36,13 @@ io.on('connection', socketioJwt.authorize({
   }))
   .on('authenticated', (socket) => {
     socket.on('message', (messageObject) => {
-        io.emit('message', messageObject);
+        io.sockets.in(messageObject.conversationId).emit('message', messageObject);
 
         const newMessage = new Message ({
             msg: messageObject.msg,
             sender: socket.decoded_token._doc._id
         });
 
-        console.log(newMessage);
        Conversation.findOne({_id: messageObject.conversationId})
        .exec((err, conv) => {
             conv.messages.push(newMessage);
@@ -53,18 +54,9 @@ io.on('connection', socketioJwt.authorize({
         });
     });
 
-    socket.on('new-chat', chat => {
-      io.emit('new-chat', chat);
-    })
-
     socket.on('join-room', room => {
       socket.join(room);
-      io.emit('join-room', {
-        user: socket.decoded_token,
-        time: Date.now()
-      });
-    })
-
+    });
   });
 
 server.listen(3000, () => {

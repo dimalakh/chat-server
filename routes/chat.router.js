@@ -5,8 +5,6 @@ const User = require('../models/user.model');
 const Message = require('../models/message.model');
 const Conversation = require('../models/conversation.model');
 
-
-
 //get user conversations
 router.get('/:userId', (req, res) => {
     User.findOne({ _id: req.params.userId})
