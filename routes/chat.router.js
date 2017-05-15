@@ -16,16 +16,13 @@ router.get('/:userId', (req, res) => {
     });
 });
 
-// get  messages by conversation id
+// get messages by conversation id
 router.get('/conversation/:id', (req, res) => {
     Conversation.findOne({ _id: req.params.id})
     .populate('messages')
     .exec((err, conversation) => {
         Message.find({ _id: {$in: conversation.messages }})
-        .populate({
-            path: 'sender',
-            select: 'username'
-        })
+        .populate('sender','username')
         .exec((err, messages) => {
             res.send(messages);
         });
