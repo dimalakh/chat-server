@@ -23,7 +23,7 @@ router.post('/login', (req, res) => {
     }).exec((err, user) => {
         if (err) res.send(err);
         if (user === null) {
-            res.sendStatus(404).send(404);
+            res.sendStatus(404);
         } else {
             if (user.password === req.body.password) {
                 const token = jwt.sign(user, 'secretKey', { noTimestamp: true })
