@@ -11,7 +11,7 @@ router.get('/:userId', (req, res) => {
     .exec((err, user) => {
         Conversation.find({ _id: {$in: user.conversations}})
         .exec((err, conversation) => {
-            res.send(conversation);
+            res.json(conversation);
         });
     });
 });
@@ -24,7 +24,7 @@ router.get('/conversation/:id', (req, res) => {
         Message.find({ _id: {$in: conversation.messages }})
         .populate('sender','username')
         .exec((err, messages) => {
-            res.send(messages);
+            res.json(messages);
         });
     });
 });
@@ -36,12 +36,13 @@ router.post('/conversation', (req, res) => {
     });
     newConversation.save((err, conversation) => {
         if (err) res.send(err); 
-        res.send(conversation);
         User.findOne({ _id: req.body.userId })
         .exec((err, user) => {
             user.conversations.push(conversation._id);
             user.save();
         });
+        
+        res.json(conversation);
     });;
 });
 

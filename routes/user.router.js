@@ -21,7 +21,7 @@ router.put('/:id', (req, res) => {
     User.findOneAndUpdate({ _id: req.params.id }, data)
         .exec((err, user) => {
             if(err) res.send(err);
-            res.status(200).send(user);
+            res.status(200).json(user);
         });
 });
 

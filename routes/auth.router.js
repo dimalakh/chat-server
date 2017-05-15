@@ -27,9 +27,14 @@ router.post('/login', (req, res) => {
             res.sendStatus(404);
         } else {
             if (bcrypt.compareSync(req.body.password, user.password)) {
-                const token = jwt.sign(user, 'secretKey', { noTimestamp: true })
+                const token = jwt.sign(user, 'secretKey', { noTimestamp: true });
                 res.json({
-                    user,
+                    user: {
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email,
+                        conversations: user.conversations
+                    },
                     token,
                     tokenType: 'Bearer'
                 });
