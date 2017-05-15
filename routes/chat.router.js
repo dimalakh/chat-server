@@ -30,15 +30,23 @@ router.get('/conversation/:id', (req, res) => {
             res.send(messages);
         });
     });
-    // .exec((err, conversation) => {
-    //     Message.find({ _id: {$in: conversation.messages }})
-    //     .populate('sender')
-    //     .exec((err, messages) => {
-    //         res.send(messages);
-    //     });
-    // });
 });
 
+// create new conversation
+router.post('/conversation', (req, res) => {
+    const newConversation = new Conversation({
+        users: req.body.userId
+    });
+    newConversation.save((err, conversation) => {
+        if (err) res.send(err); 
+        res.send(conversation);
+        User.findOne({ _id: req.body.userId })
+        .exec((err, user) => {
+            user.conversations.push(conversation._id);
+            user.save();
+        });
+    });;
+});
 // router.get('/conversations', (req, res) => {
 //     Conversation.find().exec((err, conversations) => {
 //         if (err) res.send(err);
