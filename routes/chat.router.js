@@ -10,8 +10,23 @@ router.get('/:userId', (req, res) => {
     User.findOne({ _id: req.params.userId})
     .exec((err, user) => {
         Conversation.find({ _id: {$in: user.conversations}})
-        .exec((err, conversation) => {
-            res.json(conversation);
+        .populate('messages')
+        .exec((err, conversations) => {
+            const tempConversations = [];
+
+            conversations.forEach( conv => {
+                const msgsNumber = conv.messages.length,
+                      lastMessage = conv.messages[msgsNumber - 1];
+
+                const newConv = {
+                    _id: conv._id,
+                    users: conv.users,
+                    lastMsg: lastMessage
+                }
+
+                tempConversations.push(newConv);
+            });
+            res.json(tempConversations);
         });
     });
 });
