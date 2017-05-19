@@ -11,16 +11,20 @@ router.get('/:userId', (req, res) => {
     .exec((err, user) => {
         Conversation.find({ _id: {$in: user.conversations}})
         .populate('messages')
+        .populate('users', '-password -conversations -_v -email')
         .exec((err, conversations) => {
             const tempConversations = [];
 
             conversations.forEach( conv => {
                 const msgsNumber = conv.messages.length,
                       lastMessage = conv.messages[msgsNumber - 1];
+                const usersnameArr = conv.users.map(user => {
+                    return user.username;
+                });
 
                 const newConv = {
                     _id: conv._id,
-                    users: conv.users,
+                    users: usersnameArr,
                     lastMsg: lastMessage
                 }
 

@@ -4,7 +4,7 @@ const socketioJwt = require('socketio-jwt');
 const mongoose = require('mongoose');
 const cors = require('cors')
 
-mongoose.connect('mongodb://localhost/chat');
+mongoose.connect('mongodb://localhost/chat2');
 const db = mongoose.connection;
 
 const auth = require('./routes/auth.router');
