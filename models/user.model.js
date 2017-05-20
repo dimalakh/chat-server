@@ -14,6 +14,10 @@ const UserSchema = mongoose.Schema({
     email: {
         type: String
     },
+    online: {
+        type: Boolean,
+        default: false
+    },
     conversations: {
         type: [mongoose.Schema.ObjectId],
         ref: 'Conversation'

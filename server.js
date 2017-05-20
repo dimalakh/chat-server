@@ -15,6 +15,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+const User = require('./models/user.model');
 const Message = require('./models/message.model');
 const Conversation = require('./models/conversation.model');
 
@@ -35,6 +36,27 @@ io.on('connection', socketioJwt.authorize({
     callback: false 
   }))
   .on('authenticated', (socket) => {
+    socket.on('join-chat', (member) => {
+        io.sockets.emit('join-chat', member);
+        
+        User.findOne({ _id: member.user._id })
+            .exec((err, user) => {
+                user.online = true;
+                io.sockets.emit('join-chat', user);
+                user.save();
+            });
+    });
+
+    socket.on('disconnect', () => {
+        console.log(socket.decoded_token._doc._id);
+
+        User.findOne({ _id: socket.decoded_token._doc._id })
+            .exec((err, user) => {
+                user.online = false;
+                user.save();
+            });
+    });
+
     socket.on('message', (messageObject) => {
         io.sockets.in(messageObject.conversationId).emit('message', messageObject);
 
