@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', auth);
-app.use('/user', user);
+app.use('/users', user);
 app.use('/chat', chat);
 
 io.on('connection', socketioJwt.authorize({
@@ -36,24 +36,23 @@ io.on('connection', socketioJwt.authorize({
     callback: false 
   }))
   .on('authenticated', (socket) => {
+    const userId = socket.decoded_token._doc._id;
+
     socket.on('join-chat', (member) => {
-        io.sockets.emit('join-chat', member);
-        
-        User.findOne({ _id: member.user._id })
+        User.findOne({ _id: userId }, { password: 0, email: 0, username: 0, conversations: 0 })
             .exec((err, user) => {
                 user.online = true;
-                io.sockets.emit('join-chat', user);
                 user.save();
+                io.sockets.emit('join-chat', user);
             });
     });
 
     socket.on('disconnect', () => {
-        console.log(socket.decoded_token._doc._id);
-
-        User.findOne({ _id: socket.decoded_token._doc._id })
+        User.findOne({ _id: userId }, { password: 0, email: 0, username: 0, conversations: 0 })
             .exec((err, user) => {
                 user.online = false;
                 user.save();
+                io.sockets.emit('disconnect-chat', user);
             });
     });
 

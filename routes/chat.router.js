@@ -18,13 +18,17 @@ router.get('/:userId', (req, res) => {
             conversations.forEach( conv => {
                 const msgsNumber = conv.messages.length,
                       lastMessage = conv.messages[msgsNumber - 1];
-                const usersnameArr = conv.users.map(user => {
-                    return user.username;
+                const usersArr = conv.users.map(user => {
+                    return { 
+                        _id: user._id,
+                        username: user.username,
+                        online: user.online
+                    };
                 });
 
                 const newConv = {
                     _id: conv._id,
-                    users: usersnameArr,
+                    users: usersArr,
                     lastMsg: lastMessage
                 }
 
