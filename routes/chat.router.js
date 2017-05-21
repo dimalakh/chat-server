@@ -55,15 +55,17 @@ router.get('/conversation/:id', (req, res) => {
 // create new conversation
 router.post('/conversation', (req, res) => {
     const newConversation = new Conversation({
-        users: req.body.userId
+        users: req.body.usersIds
     });
     newConversation.save((err, conversation) => {
         if (err) res.send(err); 
-        User.findOne({ _id: req.body.userId })
-        .exec((err, user) => {
-            user.conversations.push(conversation._id);
-            user.save();
-        });
+        req.body.usersIds.forEach(userId => {
+            User.findOne({ _id: userId })
+            .exec((err, user) => {
+                user.conversations.push(conversation._id);
+                user.save();
+            });
+        })
         
         res.json(conversation);
     });;
