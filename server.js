@@ -4,7 +4,13 @@ const socketioJwt = require('socketio-jwt');
 const mongoose = require('mongoose');
 const cors = require('cors')
 
-mongoose.connect('mongodb://localhost/chat2');
+const username = 'YOUR_USERNAME';
+const password = 'YOUR_PASSWORD';
+const hosts = 'lon5-c10-0.mongo.objectrocket.com:43290,lon5-c10-2.mongo.objectrocket.com:43290,lon5-c10-1.mongo.objectrocket.com:43290';
+const database = 'YOUR_DATABASE_NAME';
+const options = '?replicaSet=9abe5389c17d42d89be585f37db9af22';
+const connectionString = 'mongodb://' + username + ':' + password + '@' + hosts + '/' + database + options;
+mongoose.connect('mongodb://donbon:2229118SS@ds149711.mlab.com:49711/reactchat');
 const db = mongoose.connection;
 
 const auth = require('./routes/auth.router');
