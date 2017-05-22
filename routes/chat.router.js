@@ -57,7 +57,26 @@ router.post('/conversation', (req, res) => {
     const newConversation = new Conversation({
         users: req.body.usersIds
     });
-    newConversation.save((err, conversation) => {
+    
+    Conversation.find({ users: req.body.usersIds}).exec((err, arr) => {
+        if(arr.length === 0) {
+            newConversation.save((err, conversation) => {
+                if (err) res.send(err); 
+                req.body.usersIds.forEach(userId => {
+                    User.findOne({ _id: userId })
+                    .exec((err, user) => {
+                        user.conversations.push(conversation._id);
+                        user.save();
+                    });
+                })
+                res.json(conversation);
+            });
+        } else {
+            res.json('Conversation already created');
+        }
+    });
+
+    /*newConversation.save((err, conversation) => {
         if (err) res.send(err); 
         req.body.usersIds.forEach(userId => {
             User.findOne({ _id: userId })
@@ -66,9 +85,8 @@ router.post('/conversation', (req, res) => {
                 user.save();
             });
         })
-        
         res.json(conversation);
-    });;
+    });*/
 });
 
 module.exports = router;
