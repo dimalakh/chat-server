@@ -13,6 +13,8 @@ const connectionString = 'mongodb://' + username + ':' + password + '@' + hosts 
 mongoose.connect('mongodb://donbon:2229118SS@ds149711.mlab.com:49711/reactchat');
 const db = mongoose.connection;
 
+const port = process.env.PORT || 8080;
+
 const auth = require('./routes/auth.router');
 const user = require('./routes/user.router');
 const chat = require('./routes/chat.router');
@@ -86,6 +88,6 @@ io.on('connection', socketioJwt.authorize({
     });
   });
 
-server.listen(3000, () => {
+server.listen(port, () => {
     console.log(`server is running on localhost:3000`)
 });
