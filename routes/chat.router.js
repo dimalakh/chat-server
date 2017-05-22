@@ -18,13 +18,12 @@ router.get('/:userId', (req, res) => {
             conversations.forEach( conv => {
                 const msgsNumber = conv.messages.length;
                 let lastMessage = conv.messages[msgsNumber - 1];
-                /*if(typeof(lastMessage) == 'undefined') {
-                    console.log(lastMessage);
+                if(typeof(lastMessage) == 'undefined') {
                     lastMessage = {
                         date: 0,
                         msg: ''
                     };
-                }*/
+                }
                 const usersArr = conv.users.map(user => {
                     return { 
                         _id: user._id,
