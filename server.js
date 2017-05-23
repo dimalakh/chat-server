@@ -69,7 +69,8 @@ io.on('connection', socketioJwt.authorize({
 
         const newMessage = new Message ({
             msg: messageObject.msg,
-            sender: socket.decoded_token._doc._id
+            sender: socket.decoded_token._doc._id,
+            date: Date.now()
         });
 
        Conversation.findOne({_id: messageObject.conversationId})
