@@ -18,6 +18,10 @@ const UserSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    image: {
+        type: String,
+        default: 'https://pbs.twimg.com/profile_images/852416028051197952/srTQTCQN_bigger.jpg'
+    },
     conversations: {
         type: [mongoose.Schema.ObjectId],
         ref: 'Conversation'

@@ -34,6 +34,7 @@ router.post('/login', (req, res) => {
                         _id: user._id,
                         username: user.username,
                         email: user.email,
+                        image: user.image,
                         conversations: user.conversations
                     },
                     token,

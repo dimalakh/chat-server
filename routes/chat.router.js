@@ -22,7 +22,6 @@ router.get('/:userId', (req, res) => {
                             msg: ''
                         }
                     }
-                    console.log(lastMessage);
                     return { 
                         _id: conv._id,
                         lastMsg: lastMessage,
@@ -40,7 +39,7 @@ router.get('/conversation/:id', (req, res) => {
     .populate('messages')
     .exec((err, conversation) => {
         Message.find({ _id: {$in: conversation.messages }})
-        .populate('sender','username')
+        .populate('sender username')
         .exec((err, messages) => {
             res.json(messages);
         });
@@ -71,7 +70,6 @@ router.post('/conversation', (req, res) => {
                 Conversation.findOne({ _id: conversation._id })
                     .populate('users', '-conversations -password')
                     .exec((err, conv) => {
-                        console.log(conv);
                          res.json(conv);
                     })
             });

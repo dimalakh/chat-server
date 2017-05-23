@@ -19,14 +19,12 @@ router.get('/:id', (req, res) => {
         });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/image', (req, res) => {
     const data = {
-       username: req.body.username,
-       email: req.body.email,
-       password: req.body.password
+       image: req.body.imgUrl,
     }
     console.log(data);
-    User.findOneAndUpdate({ _id: req.params.id }, data)
+    User.findOneAndUpdate({ _id: req.body.userId }, data)
         .exec((err, user) => {
             if(err) res.send(err);
             res.status(200).json(user);
