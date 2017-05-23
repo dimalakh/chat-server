@@ -13,34 +13,23 @@ router.get('/:userId', (req, res) => {
         .populate('messages')
         .populate('users', '-password -conversations -_v -email')
         .exec((err, conversations) => {
-            const tempConversations = [];
-
-            conversations.forEach( conv => {
-                const msgsNumber = conv.messages.length;
-                let lastMessage = conv.messages[msgsNumber - 1];
-                if(typeof(lastMessage) == 'undefined') {
-                    lastMessage = {
-                        date: 0,
-                        msg: ''
-                    };
-                }
-                const usersArr = conv.users.map(user => {
+            const convArray = conversations.map( conv => {
+                    const msgsNumber = conv.messages.length;
+                    let lastMessage = conv.messages[msgsNumber - 1];
+                    if(lastMessage === undefined) {
+                        lastMessage = {
+                            date: 0,
+                            msg: ''
+                        }
+                    }
+                    console.log(lastMessage);
                     return { 
-                        _id: user._id,
-                        username: user.username,
-                        online: user.online
-                    };
+                        _id: conv._id,
+                        lastMsg: lastMessage,
+                        users: conv.users 
+                    }
                 });
-
-                const newConv = {
-                    _id: conv._id,
-                    users: usersArr,
-                    lastMsg: lastMessage
-                }
-
-                tempConversations.push(newConv);
-            });
-            res.json(tempConversations);
+            res.json(convArray);
         });
     });
 });
@@ -61,7 +50,11 @@ router.get('/conversation/:id', (req, res) => {
 // create new conversation
 router.post('/conversation', (req, res) => {
     const newConversation = new Conversation({
-        users: req.body.usersIds
+        users: req.body.usersIds,
+        lastMsg: {
+            date: 0,
+            msg: ''
+        }
     });
     
     Conversation.find({ users: req.body.usersIds}).exec((err, arr) => {
@@ -74,11 +67,16 @@ router.post('/conversation', (req, res) => {
                         user.conversations.push(conversation._id);
                         user.save();
                     });
-                })
-                res.json(conversation);
+                });
+                Conversation.findOne({ _id: conversation._id })
+                    .populate('users', '-conversations -password')
+                    .exec((err, conv) => {
+                        console.log(conv);
+                         res.json(conv);
+                    })
             });
         } else {
-            res.json('Conversation already created');
+            res.send(200);
         }
     });
 
