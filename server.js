@@ -65,13 +65,13 @@ io.on('connection', socketioJwt.authorize({
     });
 
     socket.on('message', (messageObject) => {
-        io.sockets.in(messageObject.conversationId).emit('message', messageObject);
-
         const newMessage = new Message ({
             msg: messageObject.msg,
             sender: socket.decoded_token._doc._id,
             date: Date.now()
         });
+
+        io.sockets.in(messageObject.conversationId).emit('message', newMessage);
 
        Conversation.findOne({_id: messageObject.conversationId})
        .exec((err, conv) => {

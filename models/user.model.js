@@ -20,7 +20,7 @@ const UserSchema = mongoose.Schema({
     },
     image: {
         type: String,
-        default: 'https://pbs.twimg.com/profile_images/852416028051197952/srTQTCQN_bigger.jpg'
+        default: 'http://www.manitoulinmall.com/wp-content/themes/simply-responsive-cp-1351/images/no-thumb-250.jpg'
     },
     conversations: {
         type: [mongoose.Schema.ObjectId],

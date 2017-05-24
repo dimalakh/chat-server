@@ -34,11 +34,11 @@ router.get('/:userId', (req, res) => {
 });
 
 // get messages by conversation id
-router.get('/conversation/:id', (req, res) => {
+router.get('/conversation/:id/:fromDate', (req, res) => {
     Conversation.findOne({ _id: req.params.id})
     .populate('messages')
     .exec((err, conversation) => {
-        Message.find({ _id: {$in: conversation.messages }})
+        Message.find({ _id: {$in: conversation.messages }, date: { $gt: req.params.fromDate, $lt: Date.now() } })
         .populate('sender username')
         .exec((err, messages) => {
             res.json(messages);
@@ -57,6 +57,7 @@ router.post('/conversation', (req, res) => {
     });
     
     Conversation.find({ users: req.body.usersIds}).exec((err, arr) => {
+        console.log(arr);
         if(arr.length === 0) {
             newConversation.save((err, conversation) => {
                 if (err) res.send(err); 
@@ -74,7 +75,7 @@ router.post('/conversation', (req, res) => {
                     })
             });
         } else {
-            res.send(200);
+            res.send(400);
         }
     });
 
